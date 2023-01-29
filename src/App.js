@@ -1,7 +1,7 @@
-import logo from "./logo.svg";
-import React, { useState, useEffect } from "react";
+
+import React, { useState} from "react";
 import "./App.css";
-import { DeleteStream, CreateStream, UpdateStream } from "./Components/index";
+import { DeleteStream, CreateStream, UpdateStream,Navbar,Home} from "./Components/index";
 function App() {
   let account;
   const [currentAccount, setCurrentAccount] = useState("");
@@ -57,36 +57,9 @@ function App() {
   return (
     
     <div className="App">
-      <header class="header">
-        <h1 class="logo">
-          <a href="#">Flexbox</a>
-        </h1>
-        <ul class="main-nav">
-          <li>
-            <a href="#">Home</a>
-          </li>
-          <li>
-            <a href="#">About</a>
-          </li>
-          <li>
-            <a href="#">Portfolio</a>
-          </li>
-          <li>
-            <a href="#">Contact</a>
-          </li>
-        </ul>
-        {currentAccount === "" ? (
-        <button id="connectWallet" className="button" onClick={connectWallet}>
-          Connect Wallet
-        </button>
-      ) : (
-        <button className="button">
-          {`${currentAccount.substring(0, 4)}...${currentAccount.substring(
-            38
-          )}`}
-        </button>
-      )}
-      </header>
+      
+      <Navbar connectWallet={connectWallet} currentAccount={currentAccount}/>
+      <Home />
       <CreateStream checkIfWalletIsConnected={checkIfWalletIsConnected} currentAccount={currentAccount}/>
       <UpdateStream checkIfWalletIsConnected={checkIfWalletIsConnected} currentAccount={currentAccount}/>
       <DeleteStream checkIfWalletIsConnected={checkIfWalletIsConnected} currentAccount={currentAccount}/>

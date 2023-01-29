@@ -8,7 +8,7 @@ import {
   Spinner,
   Card
 } from "react-bootstrap";
-//import "./updateFlow.css";
+import "./UpdateStream.css";
 import { ethers } from "ethers";
 
 
@@ -89,7 +89,7 @@ const UpdateStream = ({checkIfWalletIsConnected,currentAccount}) => {
   function UpdateButton({ isLoading, children, ...props }) {
     return (
       <Button variant="success" className="button" {...props}>
-        {isButtonLoading ? <Spinner animation="border" /> : children}
+        {isButtonLoading ? "Loading..." : children}
       </Button>
     );
   }
@@ -105,12 +105,12 @@ const UpdateStream = ({checkIfWalletIsConnected,currentAccount}) => {
   };
 
   return (
-    <div>
-      <h2>Update a Flow</h2>
+    <div className="US">
+      <h2 className="title">Update a Flow</h2>
       
-      <Form>
+      <Form className="Form">
         <FormGroup className="mb-3">
-          <FormControl
+          <FormControl className="textbox"
             name="recipient"
             value={recipient}
             onChange={handleRecipientChange}
@@ -118,7 +118,7 @@ const UpdateStream = ({checkIfWalletIsConnected,currentAccount}) => {
           ></FormControl>
         </FormGroup>
         <FormGroup className="mb-3">
-          <FormControl
+          <FormControl className="textbox"
             name="flowRate"
             value={flowRate}
             onChange={handleFlowRateChange}
@@ -140,7 +140,7 @@ const UpdateStream = ({checkIfWalletIsConnected,currentAccount}) => {
 
       <div className="description">
         <div className="calculation">
-          <p>Your flow will be equal to:</p>
+          <p>Updated Flow</p>
           <p>
             <b>${flowRateDisplay !== " " ? flowRateDisplay : 0}</b> DAIx/month
           </p>

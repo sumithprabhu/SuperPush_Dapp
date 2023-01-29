@@ -6,9 +6,9 @@ import {
   FormGroup,
   FormControl,
   Spinner,
-  Card
+  
 } from "react-bootstrap";
-//import "./createFlow.css";
+import "./CreateStream.css";
 import { ethers } from "ethers";
 
 //where the Superfluid logic takes place
@@ -86,7 +86,7 @@ const CreateStream = ({checkIfWalletIsConnected,currentAccount}) => {
   function CreateButton({ isLoading, children, ...props }) {
     return (
       <Button variant="success" className="button" {...props}>
-        {isButtonLoading ? <Spinner animation="border" /> : children}
+        {isButtonLoading ? "Loading..." : children}
       </Button>
     );
   }
@@ -102,12 +102,12 @@ const CreateStream = ({checkIfWalletIsConnected,currentAccount}) => {
   };
 
   return (
-    <div>
-      <h2>Create a Flow</h2>
-      
-      <Form>
+    <div className="CS" id="about">
+      <h2 className="title">Create a Flow</h2>
+      <Form className="Form">
         <FormGroup className="mb-3">
           <FormControl
+          className="textbox"
             name="recipient"
             value={recipient}
             onChange={handleRecipientChange}
@@ -116,14 +116,17 @@ const CreateStream = ({checkIfWalletIsConnected,currentAccount}) => {
         </FormGroup>
         <FormGroup className="mb-3">
           <FormControl
+          className="textbox"
             name="flowRate"
             value={flowRate}
             onChange={handleFlowRateChange}
             placeholder="Enter a flowRate in wei/second"
           ></FormControl>
         </FormGroup>
-        <CreateButton
+        <CreateButton 
+        className="btn"
           onClick={() => {
+            
             setIsButtonLoading(true);
             createNewFlow(recipient, flowRate);
             setTimeout(() => {
@@ -134,17 +137,14 @@ const CreateStream = ({checkIfWalletIsConnected,currentAccount}) => {
           Click to Create Your Stream
         </CreateButton>
       </Form>
-
-      <div className="description">
-        
+ 
         <div className="calculation">
-          <p>Your flow will be equal to:</p>
+          <p>Current Flow</p>
           <p>
             <b>${flowRateDisplay !== " " ? flowRateDisplay : 0}</b> DAIx/month
           </p>
         </div>
       </div>
-    </div>
   );
 };
 export default CreateStream;

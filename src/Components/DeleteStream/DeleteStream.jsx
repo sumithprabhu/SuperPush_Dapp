@@ -8,7 +8,7 @@ import {
   Spinner,
   Card
 } from "react-bootstrap";
-//import "./updateFlow.css";
+import "./DeleteStream.css";
 import { ethers } from "ethers";
 
 
@@ -68,21 +68,6 @@ const DeleteStream = ({checkIfWalletIsConnected,currentAccount}) => {
   useEffect(() => {
     checkIfWalletIsConnected();
   }, []);
-
-  function calculateFlowRate(amount) {
-    if (typeof Number(amount) !== "number" || isNaN(Number(amount)) === true) {
-      alert("You can only calculate a flowRate based on a number");
-      return;
-    } else if (typeof Number(amount) === "number") {
-      if (Number(amount) === 0) {
-        return 0;
-      }
-      const amountInWei = ethers.BigNumber.from(amount);
-      const monthlyAmount = ethers.utils.formatEther(amountInWei.toString());
-      const calculatedFlowRate = monthlyAmount * 3600 * 24 * 30;
-      return calculatedFlowRate;
-    }
-  }
 
   function DeleteButton({ isLoading, children, ...props }) {
     return (
