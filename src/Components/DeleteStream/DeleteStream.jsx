@@ -10,9 +10,40 @@ import {
 } from "react-bootstrap";
 import "./DeleteStream.css";
 import { ethers } from "ethers";
+import * as PushAPI from "@pushprotocol/restapi";
 
+const sendNotification = async(titlein, bodyin,recipientin) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
 
-
+  const signer = provider.getSigner();
+    try {
+      const recipient = `eip155:5:${recipientin}`
+      const apiResponse = await PushAPI.payloads.sendNotification({
+        signer,
+        type: 3, // target
+        identityType: 2, // direct payload
+        notification: {
+          title: titlein,
+          body: bodyin
+        },
+        payload: {
+          title: titlein,
+          body: bodyin,
+          cta: '',
+          img: ''
+        },
+        recipients: recipient, // recipient address
+        channel: 'eip155:5:0x49403ae592C82fc3f861cD0b9738f7524Fb1F38C', // your channel address
+        env: 'staging'
+      });
+      
+      // apiResponse?.status === 204, if sent successfully!
+      console.log('API repsonse: ', apiResponse);
+    } catch (err) {
+      console.error('Error: ', err);
+    }
+  }
 //where the Superfluid logic takes place
 async function deleteExistingFlow(recipient) {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -35,8 +66,9 @@ async function deleteExistingFlow(recipient) {
   console.log(daix);
 
   try {
+    const send=await superSigner.getAddress();
     const deleteFlowOperation = daix.deleteFlow({
-      sender: await signer.getAddress(),
+      sender: send,
       receiver: recipient
       // userData?: string
     });
@@ -51,6 +83,7 @@ async function deleteExistingFlow(recipient) {
       `Congrats - you've just updated a money stream!
     `
     );
+    sendNotification("Stream Deleted",`Stream deleted by ${send}`,recipient);
   } catch (error) {
     console.log(
       "Hmmm, your transaction threw an error. Make sure that this stream does not already exist, and that you've entered a valid Ethereum address!"
@@ -72,7 +105,7 @@ const DeleteStream = ({checkIfWalletIsConnected,currentAccount}) => {
   function DeleteButton({ isLoading, children, ...props }) {
     return (
       <Button variant="success" className="button" {...props}>
-        {isButtonLoading ? <Spinner animation="border" /> : children}
+        {isButtonLoading ? "Deleting...": children}
       </Button>
     );
   }
@@ -82,12 +115,13 @@ const DeleteStream = ({checkIfWalletIsConnected,currentAccount}) => {
   };
 
   return (
-    <div>
-      <h2>Delete a Flow</h2>
+    <div className="DS" id="delete">
+      <h2 className="title">Delete a Flow</h2>
       
-      <Form>
+      <Form className="Form">
         <FormGroup className="mb-3">
           <FormControl
+          className="textbox"
             name="recipient"
             value={recipient}
             onChange={handleRecipientChange}
@@ -104,16 +138,11 @@ const DeleteStream = ({checkIfWalletIsConnected,currentAccount}) => {
             }, 1000);
           }}
         >
-          Click to Create Your Stream
+          Click to Delete Your Stream
         </DeleteButton>
       </Form>
 
-      <div className="description">
-        <p>
-          Go to the DeleteFlow.js component and look at the <b>deleteFlow() </b>
-          function to see under the hood
-        </p>
-      </div>
+      
     </div>
   );
 };

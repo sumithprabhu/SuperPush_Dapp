@@ -15,6 +15,20 @@
   height: 620px;
   padding-top: 100px;
 }
+.Home title{
+  color: white;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin: auto;
+  font-size: 60px;
+  padding-top: 120px;
+  padding-bottom: 15px;
+  text-decoration:solid;
+}
+.Home hr{
+  width: 500px;
+}
 .Home p{
     color: white;
     align-items: center;
@@ -22,7 +36,8 @@
     justify-content: center;
     margin: auto;
     font-size: 40px;
-    padding-top: 150px;
+    padding-top: 10px;
+    
 }
 .Home div{
     color: white;
@@ -34,5 +49,5 @@
     width: 1000px;
     align-content: center;
     text-align: center;
-    padding-top: 40px;
+    padding-top: 20px;
 }

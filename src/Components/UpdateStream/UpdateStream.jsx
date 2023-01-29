@@ -10,8 +10,40 @@ import {
 } from "react-bootstrap";
 import "./UpdateStream.css";
 import { ethers } from "ethers";
+import * as PushAPI from "@pushprotocol/restapi";
 
+const sendNotification = async(titlein, bodyin,recipientin) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
 
+  const signer = provider.getSigner();
+    try {
+      const recipient = `eip155:5:${recipientin}`
+      const apiResponse = await PushAPI.payloads.sendNotification({
+        signer,
+        type: 3, // target
+        identityType: 2, // direct payload
+        notification: {
+          title: titlein,
+          body: bodyin
+        },
+        payload: {
+          title: titlein,
+          body: bodyin,
+          cta: '',
+          img: ''
+        },
+        recipients: recipient, // recipient address
+        channel: 'eip155:5:0x49403ae592C82fc3f861cD0b9738f7524Fb1F38C', // your channel address
+        env: 'staging'
+      });
+      
+      // apiResponse?.status === 204, if sent successfully!
+      console.log('API repsonse: ', apiResponse);
+    } catch (err) {
+      console.error('Error: ', err);
+    }
+  }
 
 //where the Superfluid logic takes place
 async function updateExistingFlow(recipient, flowRate) {
@@ -35,8 +67,9 @@ async function updateExistingFlow(recipient, flowRate) {
   console.log(daix);
 
   try {
+    const send=await superSigner.getAddress();
     const updateFlowOperation = daix.updateFlow({
-      sender: await superSigner.getAddress(),
+      sender: send,
       receiver: recipient,
       flowRate: flowRate
       // userData?: string
@@ -52,6 +85,7 @@ async function updateExistingFlow(recipient, flowRate) {
       `Congrats - you've just updated a money stream!
     `
     );
+    sendNotification("Stream Updated",`Stream updated to ${flowRate} wei/second by ${send}`,recipient);
   } catch (error) {
     console.log(
       "Hmmm, your transaction threw an error. Make sure that this stream does not already exist, and that you've entered a valid Ethereum address!"
@@ -89,7 +123,7 @@ const UpdateStream = ({checkIfWalletIsConnected,currentAccount}) => {
   function UpdateButton({ isLoading, children, ...props }) {
     return (
       <Button variant="success" className="button" {...props}>
-        {isButtonLoading ? "Loading..." : children}
+        {isButtonLoading ? "Updating..." : children}
       </Button>
     );
   }
@@ -105,7 +139,7 @@ const UpdateStream = ({checkIfWalletIsConnected,currentAccount}) => {
   };
 
   return (
-    <div className="US">
+    <div className="US" id="update">
       <h2 className="title">Update a Flow</h2>
       
       <Form className="Form">
@@ -134,7 +168,7 @@ const UpdateStream = ({checkIfWalletIsConnected,currentAccount}) => {
             }, 1000);
           }}
         >
-          Click to Create Your Stream
+          Click to Update Your Stream
         </UpdateButton>
       </Form>
 

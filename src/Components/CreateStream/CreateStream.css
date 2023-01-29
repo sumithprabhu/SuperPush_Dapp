@@ -24,6 +24,7 @@
     display: flex;
     padding-bottom: 30px;
     font-size: 40px;
+    padding-top: 100px;
 }
 .Form{
     margin: auto;
@@ -54,6 +55,13 @@
     background: #061161;
     border-style: none;
     color: white;
+    cursor: pointer;
+    transition: all 0.6s ease-in-out;
+}
+.btn:hover{
+  background-color:#3546cc
+ 
+  
 }
 .calculation{
   margin: auto;

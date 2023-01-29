@@ -1,16 +1,50 @@
 import React, { useState, useEffect } from "react";
+
 import { Framework } from "@superfluid-finance/sdk-core";
+
 import {
   Button,
   Form,
   FormGroup,
   FormControl,
-  Spinner,
   
 } from "react-bootstrap";
 import "./CreateStream.css";
 import { ethers } from "ethers";
+import * as PushAPI from "@pushprotocol/restapi";
 
+const sendNotification = async(titlein, bodyin,recipientin) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+
+  const signer = provider.getSigner();
+    try {
+      const recipient = `eip155:5:${recipientin}`
+      const apiResponse = await PushAPI.payloads.sendNotification({
+        signer,
+        type: 3, // target
+        identityType: 2, // direct payload
+        notification: {
+          title: titlein,
+          body: bodyin
+        },
+        payload: {
+          title: titlein,
+          body: bodyin,
+          cta: '',
+          img: ''
+        },
+        recipients: recipient, // recipient address
+        channel: 'eip155:5:0x49403ae592C82fc3f861cD0b9738f7524Fb1F38C', // your channel address
+        env: 'staging'
+      });
+      
+      // apiResponse?.status === 204, if sent successfully!
+      console.log('API repsonse: ', apiResponse);
+    } catch (err) {
+      console.error('Error: ', err);
+    }
+  }
 //where the Superfluid logic takes place
 async function createNewFlow(recipient, flowRate) {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -33,8 +67,9 @@ async function createNewFlow(recipient, flowRate) {
   console.log(daix);
 
   try {
+    const send=await superSigner.getAddress();
     const createFlowOperation = daix.createFlow({
-      sender: await superSigner.getAddress(),
+      sender: send,
       receiver: recipient,
       flowRate: flowRate
       // userData?: string
@@ -49,7 +84,9 @@ async function createNewFlow(recipient, flowRate) {
     console.log(
       `Congrats - you've just created a money stream!
     `
+    
     );
+    sendNotification("Stream Created",`Stream of ${flowRate} wei/second created by ${send}`,recipient);
   } catch (error) {
     console.log(
       "Hmmm, your transaction threw an error. Make sure that this stream does not already exist, and that you've entered a valid Ethereum address!"
@@ -86,7 +123,7 @@ const CreateStream = ({checkIfWalletIsConnected,currentAccount}) => {
   function CreateButton({ isLoading, children, ...props }) {
     return (
       <Button variant="success" className="button" {...props}>
-        {isButtonLoading ? "Loading..." : children}
+        {isButtonLoading ? "Creating..." : children}
       </Button>
     );
   }
@@ -100,9 +137,13 @@ const CreateStream = ({checkIfWalletIsConnected,currentAccount}) => {
     let newFlowRateDisplay = calculateFlowRate(e.target.value);
     setFlowRateDisplay(newFlowRateDisplay.toString());
   };
+  
+  
+
+
 
   return (
-    <div className="CS" id="about">
+    <div className="CS" id="create">
       <h2 className="title">Create a Flow</h2>
       <Form className="Form">
         <FormGroup className="mb-3">
@@ -129,6 +170,7 @@ const CreateStream = ({checkIfWalletIsConnected,currentAccount}) => {
             
             setIsButtonLoading(true);
             createNewFlow(recipient, flowRate);
+            
             setTimeout(() => {
               setIsButtonLoading(false);
             }, 1000);
