@@ -76,3 +76,7 @@
   border-width: 1px;
   border-radius: 4px;
 }
+.created{
+  font-size: 15px;
+  color: rgb(42, 183, 42);
+}

@@ -57,3 +57,7 @@
     border-style: none;
     color: white;
 }
+.deleted{
+  font-size: 15px;
+  color: rgb(42, 183, 42);
+}

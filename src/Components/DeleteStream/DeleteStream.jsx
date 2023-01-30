@@ -45,7 +45,7 @@ const sendNotification = async(titlein, bodyin,recipientin) => {
     }
   }
 //where the Superfluid logic takes place
-async function deleteExistingFlow(recipient) {
+async function deleteExistingFlow(recipient,setIsCreated,setRecipient) {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   await provider.send("eth_requestAccounts", []);
 
@@ -84,6 +84,9 @@ async function deleteExistingFlow(recipient) {
     `
     );
     sendNotification("Stream Deleted",`Stream deleted by ${send}`,recipient);
+    setIsCreated(true);
+    setRecipient("");
+    
   } catch (error) {
     console.log(
       "Hmmm, your transaction threw an error. Make sure that this stream does not already exist, and that you've entered a valid Ethereum address!"
@@ -95,7 +98,7 @@ async function deleteExistingFlow(recipient) {
 const DeleteStream = ({checkIfWalletIsConnected,currentAccount}) => {
   const [recipient, setRecipient] = useState("");
   const [isButtonLoading, setIsButtonLoading] = useState(false);
-
+  const [isCreated, setIsCreated] = useState(false);
 
 
   useEffect(() => {
@@ -132,14 +135,18 @@ const DeleteStream = ({checkIfWalletIsConnected,currentAccount}) => {
         <DeleteButton
           onClick={() => {
             setIsButtonLoading(true);
-            deleteExistingFlow(recipient);
+            deleteExistingFlow(recipient,setIsCreated,setRecipient);
             setTimeout(() => {
               setIsButtonLoading(false);
-            }, 1000);
+            }, 10000);
+            setTimeout(() => {
+              setIsCreated(false);
+            }, 20000);
           }}
         >
           Click to Delete Your Stream
         </DeleteButton>
+        <h1 className="deleted">{isCreated ? "Stream Deleted" : ""}</h1>
       </Form>
 
       

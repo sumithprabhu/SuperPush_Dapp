@@ -46,7 +46,7 @@ const sendNotification = async(titlein, bodyin,recipientin) => {
   }
 
 //where the Superfluid logic takes place
-async function updateExistingFlow(recipient, flowRate) {
+async function updateExistingFlow(recipient, flowRate,setIsCreated,setFlowRate,setRecipient) {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   await provider.send("eth_requestAccounts", []);
 
@@ -86,6 +86,9 @@ async function updateExistingFlow(recipient, flowRate) {
     `
     );
     sendNotification("Stream Updated",`Stream updated to ${flowRate} wei/second by ${send}`,recipient);
+    setIsCreated(true);
+    setRecipient("");
+    setFlowRate("");
   } catch (error) {
     console.log(
       "Hmmm, your transaction threw an error. Make sure that this stream does not already exist, and that you've entered a valid Ethereum address!"
@@ -99,6 +102,7 @@ const UpdateStream = ({checkIfWalletIsConnected,currentAccount}) => {
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [flowRate, setFlowRate] = useState("");
   const [flowRateDisplay, setFlowRateDisplay] = useState("");
+  const [isCreated, setIsCreated] = useState(false);
   
 
   useEffect(() => {
@@ -162,14 +166,18 @@ const UpdateStream = ({checkIfWalletIsConnected,currentAccount}) => {
         <UpdateButton
           onClick={() => {
             setIsButtonLoading(true);
-            updateExistingFlow(recipient, flowRate);
+            updateExistingFlow(recipient, flowRate,setIsCreated,setFlowRate,setRecipient);
             setTimeout(() => {
               setIsButtonLoading(false);
-            }, 1000);
+            }, 10000);
+            setTimeout(() => {
+              setIsCreated(false);
+            }, 20000);
           }}
         >
           Click to Update Your Stream
         </UpdateButton>
+        <h1 className="updated">{isCreated ? "Stream Updated" : ""}</h1>
       </Form>
 
       <div className="description">

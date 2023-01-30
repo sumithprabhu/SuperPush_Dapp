@@ -46,7 +46,7 @@ const sendNotification = async(titlein, bodyin,recipientin) => {
     }
   }
 //where the Superfluid logic takes place
-async function createNewFlow(recipient, flowRate) {
+async function createNewFlow(recipient, flowRate,setIsCreated,setFlowRate,setRecipient) {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   await provider.send("eth_requestAccounts", []);
 
@@ -86,11 +86,16 @@ async function createNewFlow(recipient, flowRate) {
     `
     
     );
+    
     sendNotification("Stream Created",`Stream of ${flowRate} wei/second created by ${send}`,recipient);
+    setIsCreated(true);
+    setRecipient("");
+    setFlowRate("");
   } catch (error) {
     console.log(
       "Hmmm, your transaction threw an error. Make sure that this stream does not already exist, and that you've entered a valid Ethereum address!"
     );
+    
     console.error(error);
   }
 }
@@ -100,7 +105,8 @@ const CreateStream = ({checkIfWalletIsConnected,currentAccount}) => {
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [flowRate, setFlowRate] = useState("");
   const [flowRateDisplay, setFlowRateDisplay] = useState("");
-  
+  const [isCreated, setIsCreated] = useState(false);
+
   useEffect(() => {
     checkIfWalletIsConnected();
   }, []);
@@ -169,15 +175,19 @@ const CreateStream = ({checkIfWalletIsConnected,currentAccount}) => {
           onClick={() => {
             
             setIsButtonLoading(true);
-            createNewFlow(recipient, flowRate);
+            createNewFlow(recipient, flowRate,setIsCreated,setFlowRate,setRecipient);
             
             setTimeout(() => {
               setIsButtonLoading(false);
-            }, 1000);
+            }, 10000);
+            setTimeout(() => {
+              setIsCreated(false);
+            }, 20000);
           }}
         >
           Click to Create Your Stream
         </CreateButton>
+        <h1 className="created">{isCreated ? "Stream Created" : ""}</h1>
       </Form>
  
         <div className="calculation">
