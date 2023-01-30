@@ -12,6 +12,26 @@ Features:
 - Delete a stream.
 - Notified for every actions on Dapp.
 
+Problem it solves:
+-
+The main problem in implementing blockchain in real world is that ,for every transaction or action we need to see our ledger in order to confirm our action, So this project tries to solve or dignify the actions made on the Dapp powered by Superfluid. That is this Dapp contains few functionalities which are implemented with the help of Superfluid SDK like Creating, Updating and Deleting a Stream and to bring in the part of notifications Push Protocol SDK is used which provides every action's notification to the receivers end after opting in for SuperPush channel at staging.push.org .
+
+Challenges faced:
+-
+As part of Challenges,
+- Used Superfluid SDK first time.
+- Struggled with react hooks.
+- Runtime error while deployment.
+- Used Push SDK for frontend side first time and got some signer errors.
+
+Although all errors are solved now, and the project is up and running.
+
+Project Link:
+-
+[SuperPush](https://superpush.netlify.app/)
+
+Run Project:
+-
 To Run this project on your local system , follow the below steps:
 1) Clone the repo
 ```
